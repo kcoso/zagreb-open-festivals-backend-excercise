@@ -17,23 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * TODO (studentski zadatak): implementirati logiku za omiljene festivale.
- *
- * Entitet {@code Favorite} i {@code FavoriteRepository} su već gotovi (N:M veza
- * User <-> Festival preko zasebne "join" tablice).
- *
- * Koraci:
- *  1. getMyFavorites(username) - dohvatiti sve Favorite zapise za korisnika i
- *     mapirati ih u listu FestivalSummaryResponse (koristeći FestivalMapper)
- *  2. addFavorite(username, festivalId) - provjeriti da festival postoji i da
- *     kombinacija (user, festival) već ne postoji (FavoriteRepository.existsByUserIdAndFestivalId),
- *     zatim kreirati i spremiti novi Favorite
- *  3. removeFavorite(username, festivalId) - pronaći Favorite
- *     (FavoriteRepository.findByUserIdAndFestivalId) i obrisati ga
- *  4. Dodati odgovarajuće @Transactional / @Transactional(readOnly = true) anotacije
- *  5. Baciti ResourceNotFoundException ako festival ili favorit ne postoji
- */
+
 @Service
 @RequiredArgsConstructor
 public class FavoriteServiceImpl implements FavoriteService {

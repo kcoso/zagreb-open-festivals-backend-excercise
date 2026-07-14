@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repozitorij je gotov - FavoriteService/FavoriteController su TODO (studentski zadatak).
+ * Repozitorij je gotov
  */
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
