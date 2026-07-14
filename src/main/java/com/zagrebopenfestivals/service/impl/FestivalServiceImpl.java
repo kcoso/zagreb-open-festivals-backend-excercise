@@ -29,12 +29,8 @@ public class FestivalServiceImpl implements FestivalService {
                 .toList();
     }
 
-    // Napomena: metoda namjerno NEMA @Transactional. FestivalMapper#toDetailResponse
-    // čita festival.getFoods() i festival.getDrinks(), a to su LAZY kolekcije.
-    // Budući da je spring.jpa.open-in-view postavljen na false (application.yaml),
-    // Hibernate sesija se zatvara čim ova metoda vrati Festival entitet iz repozitorija -
-    // pokušaj čitanja lazy kolekcija u mapperu će baciti LazyInitializationException.
     @Override
+    @Transactional
     public FestivalDetailResponse getById(Long id) {
         Festival festival = festivalRepository.findById(id)
                 .orElseThrow(() -> ResourceNotFoundException.of("Festival", id));
