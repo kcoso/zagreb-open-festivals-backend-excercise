@@ -69,19 +69,14 @@ public class SecurityConfig {
                         // --- Korisnički profil ---
                         .requestMatchers(HttpMethod.GET, "/users/me").authenticated()
 
-                        // TODO (studentski zadatak): Piće (Drink) trenutno nema definirana
-                        // pravila pristupa ovdje - endpointi /festivals/*/drinks, /drinks/**
-                        // trenutno padaju na ".anyRequest().authenticated()" niže, što znači
-                        // da bilo koji prijavljeni korisnik (i USER, ne samo ADMIN) može
-                        // trenutno raditi POST/PUT/DELETE na piću. Dodajte pravila analogno
-                        // gornjem bloku za Food (GET javno, write samo ADMIN) kad implementirate
-                        // DrinkController/DrinkService.
+                        // --- Piće (čitanje javno, pisanje samo ADMIN) ---
+                        .requestMatchers(HttpMethod.GET, "/festivals/*/drinks").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/festivals/*/drinks").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/drinks/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/drinks/*").hasRole("ADMIN")
 
-                        // TODO (studentski zadatak): Favoriti trenutno nemaju definirana
-                        // pravila pristupa ovdje - /favorites/** padaju na
-                        // ".anyRequest().authenticated()" niže. Kad implementirate
-                        // FavoriteController/FavoriteService, dodajte pravilo da su ti
-                        // endpointi dostupni samo prijavljenom USER-u (hasRole("USER")).
+                        // --- Favoriti (samo USER) ---
+                        .requestMatchers("/favorites/**").hasRole("USER")
 
                         .anyRequest().authenticated()
                 )
