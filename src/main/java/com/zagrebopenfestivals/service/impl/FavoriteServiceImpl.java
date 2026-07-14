@@ -1,6 +1,11 @@
 package com.zagrebopenfestivals.service.impl;
 
 import com.zagrebopenfestivals.dto.response.FestivalSummaryResponse;
+import com.zagrebopenfestivals.entity.Favorite;
+import com.zagrebopenfestivals.entity.Festival;
+import com.zagrebopenfestivals.entity.User;
+import com.zagrebopenfestivals.exception.DuplicateResourceException;
+import com.zagrebopenfestivals.exception.ResourceNotFoundException;
 import com.zagrebopenfestivals.mapper.FestivalMapper;
 import com.zagrebopenfestivals.repository.FavoriteRepository;
 import com.zagrebopenfestivals.repository.FestivalRepository;
@@ -8,6 +13,7 @@ import com.zagrebopenfestivals.repository.UserRepository;
 import com.zagrebopenfestivals.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,17 +44,72 @@ public class FavoriteServiceImpl implements FavoriteService {
     private final FestivalMapper festivalMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<FestivalSummaryResponse> getMyFavorites(String username) {
-        throw new UnsupportedOperationException("TODO: implementirati FavoriteService#getMyFavorites");
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Korisnik s korisničkim imenom " + username + " ne postoji"
+                ));
+
+        return favoriteRepository.findAllByUserId(user.getId()).stream()
+                .map(Favorite::getFestival)
+                .map(festivalMapper::toSummaryResponse)
+                .toList();
     }
 
     @Override
+    @Transactional
     public void addFavorite(String username, Long festivalId) {
-        throw new UnsupportedOperationException("TODO: implementirati FavoriteService#addFavorite");
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Korisnik s korisničkim imenom " + username + " ne postoji"
+                ));
+
+        Festival festival = festivalRepository.findById(festivalId)
+                .orElseThrow(() ->
+                        ResourceNotFoundException.of("Festival", festivalId)
+                );
+
+        if (favoriteRepository.existsByUserIdAndFestivalId(
+                user.getId(),
+                festivalId
+        )) {
+            throw new DuplicateResourceException(
+                    "Festival s ID-em " + festivalId
+                            + " već se nalazi među favoritima"
+            );
+        }
+
+        Favorite favorite = Favorite.builder()
+                .user(user)
+                .festival(festival)
+                .build();
+
+        favoriteRepository.save(favorite);
     }
 
+
     @Override
+    @Transactional
     public void removeFavorite(String username, Long festivalId) {
-        throw new UnsupportedOperationException("TODO: implementirati FavoriteService#removeFavorite");
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Korisnik s korisničkim imenom " + username + " ne postoji"
+                ));
+
+        festivalRepository.findById(festivalId)
+                .orElseThrow(() ->
+                        ResourceNotFoundException.of("Festival", festivalId)
+                );
+
+        Favorite favorite = favoriteRepository
+                .findByUserIdAndFestivalId(user.getId(), festivalId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Festival s ID-em " + festivalId
+                                + " nije pronađen među favoritima korisnika "
+                                + username
+                ));
+
+        favoriteRepository.delete(favorite);
     }
 }
