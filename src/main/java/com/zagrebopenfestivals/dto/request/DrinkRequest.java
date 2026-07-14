@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**
- * DTO je gotov - DrinkService/DrinkController koji ga koriste su TODO (studentski zadatak).
+ * DTO je gotov
  */
 public record DrinkRequest(
 

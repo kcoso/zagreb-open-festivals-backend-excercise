@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Repozitorij je gotov - servis i controller za Drink su TODO (studentski zadatak),
- * po uzoru na FoodRepository/FoodService/FoodController.
+ * Repozitorij je gotov
  */
 @Repository
 public interface DrinkRepository extends JpaRepository<Drink, Long> {
