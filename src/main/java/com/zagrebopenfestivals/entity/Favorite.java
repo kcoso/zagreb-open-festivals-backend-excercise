@@ -11,8 +11,6 @@ import lombok.Setter;
  * Explicitna "join" tablica između User-a i Festivala (umjesto @ManyToMany napravljeno
  * kao zaseban entitet) - ovako se lakše kasnije doda npr. createdAt na favorit.
  *
- * TODO (studentski zadatak): FavoriteService i FavoriteController još nisu implementirani.
- * Repozitorij i entitet su gotovi - nadogradite sloj iznad njih.
  */
 @Entity
 @Table(
